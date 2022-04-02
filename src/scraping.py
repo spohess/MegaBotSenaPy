@@ -1,16 +1,20 @@
-from types import NoneType
-from urllib.request import urlopen
-from urllib.error import HTTPError, URLError
-from bs4 import BeautifulSoup
 import json
+from urllib.error import HTTPError, URLError
+from urllib.request import urlopen
+
+from bs4 import BeautifulSoup
+
+from src.scrape_line import ScrapeLine
 
 
 class Scraping:
     modality = None
     soup = None
+    model = None
 
-    def __init__(self, modality):
+    def __init__(self, modality, model):
         self.modality = modality
+        self.model = model
 
     def execute(self):
         # self.__create_file()
@@ -38,8 +42,19 @@ class Scraping:
     def __set_soup(self):
         path_file = 'htmlfiles/{0}.html'.format(self.modality)
         file = open(path_file, 'r')
-        self.soup = BeautifulSoup(file.read(), 'html.parser')
+        html = ' '.join(file.read().split()).replace('> <', '><').replace('> ', '>').replace(' <', '<')
+        self.soup = BeautifulSoup(html, 'html.parser')
 
     def __read_html(self):
-        tbodys = self.soup.findAll('tbody')
-        print(tbodys)
+        table = self.soup.find('table')
+        table.find('thead').extract()
+        line = table.find('tr')
+
+        while line is not None:
+            sl = ScrapeLine(line=line)
+
+            row_data = sl.execute()
+            self.model.insert(data=row_data)
+
+            table.find('tr').extract()
+            line = table.find('tr')
