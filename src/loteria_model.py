@@ -5,7 +5,7 @@ class MegaSenaModel(DatabaseManager):
     def insert(self, data):
         self.connect()
         cur = self.con.cursor()
-        query = "INSERT INTO mega_sena VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10})".format(
+        query = "INSERT INTO mega_sena VALUES ({0},'{1}',{2},{3},{4},{5},{6},{7},{8},{9},{10})".format(
             data['concurso'],
             data['data_sorteio'],
             data['primeiro_numero'],
@@ -22,3 +22,11 @@ class MegaSenaModel(DatabaseManager):
         cur.execute(query)
         self.con.commit()
         self.close()
+
+    def get_all(self):
+        self.connect()
+        cur = self.con.cursor()
+        query = 'SELECT * FROM mega_sena'
+        result = cur.execute(query)
+
+        return result

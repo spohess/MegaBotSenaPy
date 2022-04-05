@@ -1,10 +1,9 @@
 import json
+from datetime import datetime
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
-
-from src.scrape_line import ScrapeLine
 
 
 class Scraping:
@@ -51,10 +50,30 @@ class Scraping:
         line = table.find('tr')
 
         while line is not None:
-            sl = ScrapeLine(line=line)
-
-            row_data = sl.execute()
+            row_data = self.__extract_data(line=line)
             self.model.insert(data=row_data)
 
             table.find('tr').extract()
             line = table.find('tr')
+
+    def __extract_data(self, line):
+        columns = line.findAll('td')
+
+        try:
+            data_sorteio = datetime.strptime(columns[1].get_text(), '%d/%m/%Y')
+            return {
+                'concurso': int(columns[0].get_text()),
+                'data_sorteio': data_sorteio.strftime('%Y-%m-%d'),
+                'primeiro_numero': int(columns[2].get_text()),
+                'segundo_numero': int(columns[3].get_text()),
+                'terceiro_numero': int(columns[4].get_text()),
+                'quarto_numero': int(columns[5].get_text()),
+                'quinto_numero': int(columns[6].get_text()),
+                'sexto_numero': int(columns[7].get_text()),
+                'ganhadores_sena': int(columns[8].get_text()),
+                'ganhadores_quina': int(columns[9].get_text()),
+                'ganhadores_quadra': int(columns[10].get_text()),
+            }
+
+        except IndexError:
+            print(columns)
