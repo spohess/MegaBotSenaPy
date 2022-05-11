@@ -8,13 +8,14 @@ class DatabaseManager:
     con = None
 
     def migrate(self):
-        os.remove('loteria.db')
-        self.con = sqlite3.connect('loteria.db')
+        if os.path.isfile('lottery.db'):
+            os.remove('lottery.db')
+        self.con = sqlite3.connect('lottery.db')
         migrate = Migrate(self.con)
         migrate.execute()
 
     def connect(self):
-        self.con = sqlite3.connect('loteria.db')
+        self.con = sqlite3.connect('lottery.db')
 
     def close(self):
         self.con.close()

@@ -16,7 +16,7 @@ class Scraping:
         self.model = model
 
     def execute(self):
-        # self.__create_file()
+        self.__create_file()
         self.__set_soup()
         self.__read_html()
 
@@ -60,19 +60,19 @@ class Scraping:
         columns = line.findAll('td')
 
         try:
-            data_sorteio = datetime.strptime(columns[1].get_text(), '%d/%m/%Y')
+            contest_date = datetime.strptime(columns[1].get_text(), '%d/%m/%Y')
             return {
-                'concurso': int(columns[0].get_text()),
-                'data_sorteio': data_sorteio.strftime('%Y-%m-%d'),
-                'primeiro_numero': int(columns[2].get_text()),
-                'segundo_numero': int(columns[3].get_text()),
-                'terceiro_numero': int(columns[4].get_text()),
-                'quarto_numero': int(columns[5].get_text()),
-                'quinto_numero': int(columns[6].get_text()),
-                'sexto_numero': int(columns[7].get_text()),
-                'ganhadores_sena': int(columns[8].get_text()),
-                'ganhadores_quina': int(columns[9].get_text()),
-                'ganhadores_quadra': int(columns[10].get_text()),
+                'contest': int(columns[0].get_text()),
+                'contest_date': contest_date.strftime('%Y-%m-%d'),
+                'first_number': int(columns[2].get_text()),
+                'second_number': int(columns[3].get_text()),
+                'third_number': int(columns[4].get_text()),
+                'fourth_number': int(columns[5].get_text()),
+                'fifth_number': int(columns[6].get_text()),
+                'sixth_number': int(columns[7].get_text()),
+                'winners_sena': int(columns[8].get_text()),
+                'winners_quina': int(columns[9].get_text()),
+                'winners_quadra': int(columns[10].get_text()),
             }
 
         except IndexError:
